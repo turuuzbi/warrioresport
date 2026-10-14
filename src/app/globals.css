@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #07080c;
+  --color-surface: #0d0f16;
+  --color-surface-2: #121520;
+  --color-line: rgba(255, 255, 255, 0.09);
+  --color-ink: #eceef5;
+  --color-mute: #8c93a8;
+  --color-accent: #ff6a00;
+  --color-accent-2: #ffb21e;
+  --color-hot: #ff3b3b;
+  --color-ok: #2dff9a;
+
+  --font-display: var(--font-tektur), "Exo 2", system-ui, sans-serif;
+  --font-sans: var(--font-exo), system-ui, sans-serif;
+  --font-mono: var(--font-jb), ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+  background: var(--color-bg);
+}
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+::selection {
+  background: var(--color-accent);
+  color: #000;
+}
+
+/* ---------- HUD helpers ---------- */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 106, 0, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 106, 0, 0.055) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
+}
+.scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px);
+  mix-blend-mode: multiply;
+}
+
+/* clipped, angled corners */
+.clip-card {
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+}
+.clip-btn {
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+.clip-tag {
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+
+/* glowing border: wrapper paints the border colour, inner holds the surface */
+.glow-border {
+  background: linear-gradient(135deg, rgba(255, 106, 0, 0.55), rgba(255, 255, 255, 0.06) 40%, rgba(255, 178, 30, 0.4));
+  padding: 1px;
+  transition: filter 0.3s, transform 0.3s;
+}
+.glow-border:hover {
+  filter: drop-shadow(0 0 14px rgba(255, 106, 0, 0.45));
+}
+.glow-border > .inner {
+  background: var(--color-surface);
+  height: 100%;
+}
+
+.text-glow {
+  text-shadow: 0 0 18px rgba(255, 106, 0, 0.55);
+}
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent-2);
+}
+
+/* ---------- glitch headline ---------- */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  opacity: 0.75;
+  pointer-events: none;
+}
+.glitch::before {
+  color: var(--color-hot);
+  clip-path: inset(0 0 55% 0);
+  animation: glitch-a 4.2s infinite steps(1);
+}
+.glitch::after {
+  color: #22e4ff;
+  clip-path: inset(55% 0 0 0);
+  animation: glitch-b 4.2s infinite steps(1);
+}
+@keyframes glitch-a {
+  0%, 92%, 100% { transform: translate(0); opacity: 0; }
+  93% { transform: translate(-3px, 1px); opacity: 0.8; }
+  95% { transform: translate(3px, -1px); opacity: 0.8; }
+  97% { transform: translate(-2px, 0); opacity: 0.8; }
+}
+@keyframes glitch-b {
+  0%, 90%, 100% { transform: translate(0); opacity: 0; }
+  91% { transform: translate(3px, 1px); opacity: 0.8; }
+  94% { transform: translate(-3px, 0); opacity: 0.8; }
+  96% { transform: translate(2px, -1px); opacity: 0.8; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(45, 255, 154, 0.65); }
+  50% { box-shadow: 0 0 0 7px rgba(45, 255, 154, 0); }
+}
+.pulse-dot { animation: pulse-dot 2s infinite; }
+
+@keyframes blink { 50% { opacity: 0; } }
+.caret { animation: blink 1s steps(1) infinite; }
+
+@keyframes rgb-slide {
+  from { background-position: 0% 50%; }
+  to { background-position: 200% 50%; }
+}
+.rgb-line {
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-2), var(--color-hot), var(--color-accent));
+  background-size: 200% 100%;
+  animation: rgb-slide 6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .glitch::before, .glitch::after { display: none; }
+  .pulse-dot, .caret, .rgb-line { animation: none; }
+}
